@@ -1,7 +1,7 @@
 console.log(`hi`)
 const main = document.querySelector(`main`);
 
-const renderRecipe = async (name) => {
+const renderSingleRecipe = async (name) => {
 	const response = await fetch (`https://fsa-crud-2aa9294fe819.herokuapp.com/api/2310-FSA-ET-WEB-FT-SF/recipes/${name}`)
 	const singleRecipe = await response.json();
 	console.log(singleRecipe.data.imageUrl)
@@ -20,33 +20,54 @@ const renderRecipe = async (name) => {
 	const button = document.querySelector('button');
 
 	button.addEventListener(`click`, () => {
-		load();
+		getRecipes();
 	})
 
 }
 
-const load = async () => {
+const getRecipes = async () => {
 	const response = await fetch(`https://fsa-crud-2aa9294fe819.herokuapp.com/api/2310-FSA-ET-WEB-FT-SF/recipes`);
 	const recipesJSON = await response.json();
-	console.log(recipesJSON);
+	const recipes = recipesJSON.data;
 
-	const h2 = document.createElement(`h2`);
-	const list = document.createElement('ul');
-
-	main.replaceChildren(h2);
-	main.appendChild(list);
-
-	for (i = 0; i < recipesJSON.data.length; i++) {
-		const li = document.createElement(`li`);
-		li.innerText = `${recipesJSON.data[i].name}`;
-		li.id = `${recipesJSON.data[i].id}`
-		list.appendChild(li);
-
-		li.addEventListener(`click`, () => {
-			renderRecipe(li.id);
-		})
-	}
-	
+	renderAllRecipes(recipes);
 }
 
-load();
+	const renderAllRecipes = (recipeArray) => {
+
+		const h2 = document.createElement(`h2`);
+		const list = document.createElement('ul');
+		
+		main.replaceChildren(h2);
+		main.appendChild(list);
+
+		// const recipeNames = recipeArray.map((singleRecipe) => {
+		// 	return `${singleRecipe.name}`
+		// })
+
+		recipeArray.forEach((recipe) => {
+			const li = document.createElement(`li`);
+			li.innerText = `${recipe.name}`;
+		 	li.id = `${recipe.id}`
+			list.appendChild(li);
+			
+			li.addEventListener(`click`, () => {
+				renderSingleRecipe(li.id);
+			})
+		})
+
+		// ))
+		
+		// for (i = 0; i < recipeArray.length; i++) {
+		// 	const li = document.createElement(`li`);
+		// 	li.innerText = `${recipeArray[i].name}`;
+		// 	li.id = `${recipeArray[i].id}`
+		// 	list.appendChild(li);
+			
+		// 	li.addEventListener(`click`, () => {
+		// 		renderSingleRecipe(li.id);
+		// 	})
+		// }
+	}
+
+getRecipes();
